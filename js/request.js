@@ -1,18 +1,24 @@
 let dateString;
+let date = new Date();
+// calculate the new week string for the api
 function calculateWeekString(currentDate) {
 	let startDate = new Date(currentDate.getFullYear(), 0, 1);
-	var days = Math.floor((currentDate - startDate) / (24 * 60 * 60 * 1000));
+	var days = Math.floor(
+		(currentDate - startDate) / (24 * 60 * 60 * 1000)
+	);
 	var weekNumber = Math.ceil(days / 7);
 	dateString = weekNumber + "-" + currentDate.getFullYear();
 }
 calculateWeekString(new Date());
-$(document).ready(function () {
-	$.ajax({
+$(document).ready(async function () {
+	// get the berufe data from the api
+	await $.ajax({
 		url: "http://sandbox.gibm.ch/berufe.php",
 		success: function (result) {
 			if (result != null) {
-				console.log(result);
+				// loop over the data
 				result.forEach((x) => {
+					// append each element from the array as a option to the dropdown
 					$("#dropdown-group").append(
 						'<option value="' +
 							x.beruf_id +
@@ -21,14 +27,24 @@ $(document).ready(function () {
 							"</option>"
 					);
 				});
+			} else {
+				alert("Leider gibt es aktuell keine Daten.");
 			}
 		},
+		error: function (xhr, ajaxOptions, thrownError) {
+			alert(
+				"API ist aktuell nicht erreichbar. Bitte probieren Sie es später erneut"
+			);
+		},
 	});
-	$.ajax({
+	// get the classes
+	await $.ajax({
 		url: "http://sandbox.gibm.ch/klassen.php",
 		success: function (result) {
 			if (result != null) {
+				// loop over the data
 				result.forEach((x) => {
+					// append each element from the array as a option to the dropdown
 					$("#dropdown-class").append(
 						'<option value="' +
 							x.klasse_id +
@@ -37,17 +53,67 @@ $(document).ready(function () {
 							"</option>"
 					);
 				});
+			} else {
+				alert("Leider gibt es aktuell keine Daten.");
 			}
 		},
+		error: function (xhr, ajaxOptions, thrownError) {
+			alert(
+				"API ist aktuell nicht erreichbar. Bitte probieren Sie es später erneut"
+			);
+		},
 	});
+	// check local storage
+	if (
+		localStorage.getItem("class") &&
+		localStorage.getItem("group")
+	) {
+		// get all dropdown options
+		let children = document.getElementById(
+			"dropdown-class"
+		).children;
+		// loop over the childs
+		for (var i = 0; i < children.length; i++) {
+			var child = children[i];
+			// check value and the localstorage item
+			if (child.value === localStorage.getItem("class")) {
+				// select option
+				document.getElementById(
+					"dropdown-class"
+				).selectedIndex = i;
+			}
+		}
+		// get all dropdown options
+		children = document.getElementById(
+			"dropdown-group"
+		).children;
+		// loop over the childs
+		for (var i = 0; i < children.length; i++) {
+			var child = children[i];
+			// check value and the localstorage item
+			if (child.value === localStorage.getItem("group")) {
+				// select option
+				document.getElementById(
+					"dropdown-group"
+				).selectedIndex = i;
+			}
+		}
+	}
+	getData();
 });
 $("#dropdown-group").change(function () {
+	localStorage.setItem("group", this.value);
+	// get classes of profession
 	$.ajax({
-		url: "http://sandbox.gibm.ch/klassen.php?beruf_id=" + this.value,
+		url:
+			"http://sandbox.gibm.ch/klassen.php?beruf_id=" +
+			this.value,
 		success: function (result) {
 			if (result != null) {
+				// reset the dropdown
 				$("#dropdown-class").html("");
 				result.forEach((x) => {
+					// append each element from the array as a option to the dropdown
 					$("#dropdown-class").append(
 						'<option value="' +
 							x.klasse_id +
@@ -56,16 +122,34 @@ $("#dropdown-group").change(function () {
 							"</option>"
 					);
 				});
+			} else {
+				alert("Leider gibt es aktuell keine Daten.");
 			}
+		},
+		error: function (xhr, ajaxOptions, thrownError) {
+			alert(
+				"API ist aktuell nicht erreichbar. Bitte probieren Sie es später erneut"
+			);
 		},
 	});
 });
 $("#dropdown-class").change(function () {
+	// get selected option
+	let selectedOption = $(
+		"#dropdown-class option:selected"
+	).val();
+	// set value of selected option to localstorage
+	localStorage.setItem("class", selectedOption);
+
 	getData();
 });
 async function getData() {
-	let selectedOption = $("#dropdown-class option:selected").val();
-	console.log(selectedOption);
+	// get selected option
+
+	let selectedOption = $(
+		"#dropdown-class option:selected"
+	).val();
+	// get timetable of selected class
 	$.ajax({
 		url:
 			"http://sandbox.gibm.ch/tafel.php?klasse_id=" +
@@ -74,10 +158,11 @@ async function getData() {
 			dateString,
 		success: function (result) {
 			if (result != null) {
-				console.log(result);
 				let rows = "";
+				// loop over lessons
 				result.forEach((x) => {
 					let wochentag = "";
+					// get weekday as a word
 					switch (x.tafel_wochentag) {
 						case "1":
 							wochentag = "Montag";
@@ -101,6 +186,7 @@ async function getData() {
 							wochentag = "Sonntag";
 							break;
 					}
+					// add the table row to the string
 					rows +=
 						"<tr><td>" +
 						x.tafel_datum +
@@ -123,16 +209,15 @@ async function getData() {
 						"<td>" +
 						x.tafel_raum +
 						"</td>" +
-						"<td>" +
-						x.tafel_kommentar +
-						"</td> </tr>";
+						"</tr>";
 				});
+				// conconate the table string and the pagination
 				$("#data").html(
-					"<table class='table'><tr>" +
-						"<th>Datum</th><th>Wochentag</th><th>Von</th><th>Bis</th><th>Lehrer</th><th>Fach</th><th>Raum</th></tr> " +
-						rows +
-						+"</table>" +
-						'<ul class="pagination">' +
+					`<div class="table-responsive"><table class='table'><thead<tr> 
+						<th>Datum</th><th>Wochentag</th><th>Von</th><th>Bis</th><th>Lehrer</th><th>Fach</th><th>Raum</th></tr> </thead> 
+						${rows}
+						</table></div> ` +
+						'<ul class="pagination align-items-center justify-content-center">' +
 						`<li class="page-item">
 					  <button class="page-link" href="#" onClick="subOneWeek()" aria-label="Previous">
 						<span aria-hidden="true">&laquo;</span>
@@ -149,18 +234,23 @@ async function getData() {
 					</li>
 				  </ul>`
 				);
+			} else {
+				alert("Leider gibt es aktuell keine Daten.");
 			}
+		},
+		error: function (xhr, ajaxOptions, thrownError) {
+			alert(
+				"API ist aktuell nicht erreichbar. Bitte probieren Sie es später erneut"
+			);
 		},
 	});
 }
 function addOneWeek() {
-	let date = new Date();
 	date.setDate(date.getDate() + 7);
 	calculateWeekString(date);
 	getData();
 }
 function subOneWeek() {
-	let date = new Date();
 	date.setDate(date.getDate() - 7);
 	calculateWeekString(date);
 	getData();
