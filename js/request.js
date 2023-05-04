@@ -38,8 +38,14 @@ $(document).ready(async function () {
 		},
 	});
 	// get the classes
+	let classUrl = "http://sandbox.gibm.ch/klassen.php";
+	if (localStorage.getItem("group")) {
+		classUrl +=
+			"?beruf_id=" + localStorage.getItem("group");
+	}
+
 	await $.ajax({
-		url: "http://sandbox.gibm.ch/klassen.php",
+		url: classUrl,
 		success: function (result) {
 			if (result != null) {
 				// loop over the data
