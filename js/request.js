@@ -42,33 +42,43 @@ $(document).ready(async function () {
 	if (localStorage.getItem("group")) {
 		classUrl +=
 			"?beruf_id=" + localStorage.getItem("group");
-	}
 
-	await $.ajax({
-		url: classUrl,
-		success: function (result) {
-			if (result != null) {
-				// loop over the data
-				result.forEach((x) => {
-					// append each element from the array as a option to the dropdown
-					$("#dropdown-class").append(
-						'<option value="' +
-							x.klasse_id +
-							'">' +
-							x.klasse_name +
-							"</option>"
+		await $.ajax({
+			url: classUrl,
+			success: function (result) {
+				if (result != null) {
+					// loop over the data
+
+					$("#dropdown-class").removeClass("invisible");
+					$("#dropdown-class-label").removeClass(
+						"invisible"
 					);
-				});
-			} else {
-				alert("Leider gibt es aktuell keine Daten.");
-			}
-		},
-		error: function (xhr, ajaxOptions, thrownError) {
-			alert(
-				"API ist aktuell nicht erreichbar. Bitte probieren Sie es später erneut"
-			);
-		},
-	});
+					$("#dropdown-class").append(
+						"<option hidden disabled selected value> -- Klasse auswählen -- </option>					"
+					);
+
+					result.forEach((x) => {
+						console.log($("#dropdown-class").html());
+						// append each element from the array as a option to the dropdown
+						$("#dropdown-class").append(
+							'<option value="' +
+								x.klasse_id +
+								'">' +
+								x.klasse_name +
+								"</option>"
+						);
+					});
+				} else {
+					alert("Leider gibt es aktuell keine Daten.");
+				}
+			},
+			error: function (xhr, ajaxOptions, thrownError) {
+				alert(
+					"API ist aktuell nicht erreichbar. Bitte probieren Sie es später erneut"
+				);
+			},
+		});
+	}
 	// check local storage
 	if (
 		localStorage.getItem("class") &&
@@ -104,8 +114,8 @@ $(document).ready(async function () {
 				).selectedIndex = i;
 			}
 		}
+		getData();
 	}
-	getData();
 });
 $("#dropdown-group").change(function () {
 	localStorage.setItem("group", this.value);
@@ -118,8 +128,15 @@ $("#dropdown-group").change(function () {
 			if (result != null) {
 				// reset the dropdown
 				$("#dropdown-class").html("");
+				$("#dropdown-class").append(
+					"<option hidden disabled selected value> -- Klasse auswählen -- </option>					"
+				);
+				$("#dropdown-class").removeClass("invisible");
+				$("#table").html("");
+				$("#pagination").html("");
 				result.forEach((x) => {
 					// append each element from the array as a option to the dropdown
+
 					$("#dropdown-class").append(
 						'<option value="' +
 							x.klasse_id +
@@ -149,7 +166,7 @@ $("#dropdown-class").change(function () {
 
 	getData();
 });
-async function getData() {
+async function getData(state) {
 	// get selected option
 
 	let selectedOption = $(
@@ -163,7 +180,7 @@ async function getData() {
 			"&woche=" +
 			dateString,
 		success: function (result) {
-			if (result != null) {
+			if (result.length != 0) {
 				let rows = "";
 				// loop over lessons
 				result.forEach((x) => {
@@ -219,11 +236,11 @@ async function getData() {
 				});
 				// conconate the table string and the pagination
 				$("#data").html(
-					`<div class="table-responsive"><table class='table'><thead<tr> 
+					`<div class="table-responsive"><table class='table' id="table" data-mdb-animation="fade-in"><thead<tr> 
 						<th>Datum</th><th>Wochentag</th><th>Von</th><th>Bis</th><th>Lehrer</th><th>Fach</th><th>Raum</th></tr> </thead> 
 						${rows}
 						</table></div> ` +
-						'<ul class="pagination align-items-center justify-content-center">' +
+						'<ul id="pagination" class="pagination align-items-center justify-content-center">' +
 						`<li class="page-item">
 					  <button class="page-link" href="#" onClick="subOneWeek()" aria-label="Previous">
 						<span aria-hidden="true">&laquo;</span>
@@ -240,8 +257,37 @@ async function getData() {
 					</li>
 				  </ul>`
 				);
+				if (state != null && state == "add") {
+					document
+						.getElementById("table")
+						.classList.add("animated", "fadeInRight");
+				} else if (state == "sub") {
+					document
+						.getElementById("table")
+						.classList.add("animated", "fadeInLeft");
+				}
 			} else {
-				alert("Leider gibt es aktuell keine Daten.");
+				$("#data").html(
+					`<br><div class="alert alert-danger" role="alert">
+			Für diese Woche gibt es keine geplanten Stunden.
+		  </div>` +
+						'<ul id="pagination" class="pagination align-items-center justify-content-center">' +
+						`<li class="page-item">
+		<button class="page-link" href="#" onClick="subOneWeek()" aria-label="Previous">
+		  <span aria-hidden="true">&laquo;</span>
+		  <span class="sr-only">Previous</span>
+		</button>
+	  </li>
+	  <li class="page-item"><a class="page-link" href="#">${dateString}</a></li>
+	  
+	  <li class="page-item">
+		<button onClick="addOneWeek()" class="page-link" href="#" aria-label="Next">
+		  <span aria-hidden="true">&raquo;</span>
+		  <span class="sr-only">Next</span>
+		</button>
+	  </li>
+	</ul>`
+				);
 			}
 		},
 		error: function (xhr, ajaxOptions, thrownError) {
@@ -254,10 +300,10 @@ async function getData() {
 function addOneWeek() {
 	date.setDate(date.getDate() + 7);
 	calculateWeekString(date);
-	getData();
+	getData("add");
 }
 function subOneWeek() {
 	date.setDate(date.getDate() - 7);
 	calculateWeekString(date);
-	getData();
+	getData("sub");
 }
