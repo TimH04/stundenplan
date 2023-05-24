@@ -3,9 +3,7 @@ let date = new Date();
 // calculate the new week string for the api
 function calculateWeekString(currentDate) {
 	let startDate = new Date(currentDate.getFullYear(), 0, 1);
-	var days = Math.floor(
-		(currentDate - startDate) / (24 * 60 * 60 * 1000)
-	);
+	var days = Math.floor((currentDate - startDate) / (24 * 60 * 60 * 1000));
 	var weekNumber = Math.ceil(days / 7);
 	dateString = weekNumber + "-" + currentDate.getFullYear();
 }
@@ -40,8 +38,7 @@ $(document).ready(async function () {
 	// get the classes
 	let classUrl = "http://sandbox.gibm.ch/klassen.php";
 	if (localStorage.getItem("group")) {
-		classUrl +=
-			"?beruf_id=" + localStorage.getItem("group");
+		classUrl += "?beruf_id=" + localStorage.getItem("group");
 
 		await $.ajax({
 			url: classUrl,
@@ -50,9 +47,7 @@ $(document).ready(async function () {
 					// loop over the data
 
 					$("#dropdown-class").removeClass("invisible");
-					$("#dropdown-class-label").removeClass(
-						"invisible"
-					);
+					$("#dropdown-class-label").removeClass("invisible");
 					$("#dropdown-class").append(
 						"<option hidden disabled selected value> -- Klasse auswählen -- </option>					"
 					);
@@ -80,38 +75,27 @@ $(document).ready(async function () {
 		});
 	}
 	// check local storage
-	if (
-		localStorage.getItem("class") &&
-		localStorage.getItem("group")
-	) {
+	if (localStorage.getItem("class") && localStorage.getItem("group")) {
 		// get all dropdown options
-		let children = document.getElementById(
-			"dropdown-class"
-		).children;
+		let children = document.getElementById("dropdown-class").children;
 		// loop over the childs
 		for (var i = 0; i < children.length; i++) {
 			var child = children[i];
 			// check value and the localstorage item
 			if (child.value === localStorage.getItem("class")) {
 				// select option
-				document.getElementById(
-					"dropdown-class"
-				).selectedIndex = i;
+				document.getElementById("dropdown-class").selectedIndex = i;
 			}
 		}
 		// get all dropdown options
-		children = document.getElementById(
-			"dropdown-group"
-		).children;
+		children = document.getElementById("dropdown-group").children;
 		// loop over the childs
 		for (var i = 0; i < children.length; i++) {
 			var child = children[i];
 			// check value and the localstorage item
 			if (child.value === localStorage.getItem("group")) {
 				// select option
-				document.getElementById(
-					"dropdown-group"
-				).selectedIndex = i;
+				document.getElementById("dropdown-group").selectedIndex = i;
 			}
 		}
 		getData();
@@ -121,9 +105,7 @@ $("#dropdown-group").change(function () {
 	localStorage.setItem("group", this.value);
 	// get classes of profession
 	$.ajax({
-		url:
-			"http://sandbox.gibm.ch/klassen.php?beruf_id=" +
-			this.value,
+		url: "http://sandbox.gibm.ch/klassen.php?beruf_id=" + this.value,
 		success: function (result) {
 			if (result != null) {
 				// reset the dropdown
@@ -158,9 +140,7 @@ $("#dropdown-group").change(function () {
 });
 $("#dropdown-class").change(function () {
 	// get selected option
-	let selectedOption = $(
-		"#dropdown-class option:selected"
-	).val();
+	let selectedOption = $("#dropdown-class option:selected").val();
 	// set value of selected option to localstorage
 	localStorage.setItem("class", selectedOption);
 
@@ -169,9 +149,7 @@ $("#dropdown-class").change(function () {
 async function getData(state) {
 	// get selected option
 
-	let selectedOption = $(
-		"#dropdown-class option:selected"
-	).val();
+	let selectedOption = $("#dropdown-class option:selected").val();
 	// get timetable of selected class
 	$.ajax({
 		url:
@@ -236,11 +214,7 @@ async function getData(state) {
 				});
 				// conconate the table string and the pagination
 				$("#data").html(
-					`<div class="table-responsive"><table class='table' id="table" data-mdb-animation="fade-in"><thead<tr> 
-						<th>Datum</th><th>Wochentag</th><th>Von</th><th>Bis</th><th>Lehrer</th><th>Fach</th><th>Raum</th></tr> </thead> 
-						${rows}
-						</table></div> ` +
-						'<ul id="pagination" class="pagination align-items-center justify-content-center">' +
+					'<ul id="pagination" class="pagination align-items-center justify-content-center">' +
 						`<li class="page-item">
 					  <button class="page-link" href="#" onClick="subOneWeek()" aria-label="Previous">
 						<span aria-hidden="true">&laquo;</span>
@@ -255,7 +229,11 @@ async function getData(state) {
 						<span class="sr-only">Next</span>
 					  </button>
 					</li>
-				  </ul>`
+				  </ul>` +
+						`<div class="table-responsive"><table class='table' id="table" data-mdb-animation="fade-in"><thead<tr> 
+						<th>Datum</th><th>Wochentag</th><th>Von</th><th>Bis</th><th>Lehrer</th><th>Fach</th><th>Raum</th></tr> </thead> 
+						${rows}
+						</table></div> `
 				);
 				if (state != null && state == "add") {
 					document
@@ -268,25 +246,25 @@ async function getData(state) {
 				}
 			} else {
 				$("#data").html(
-					`<br><div class="alert alert-danger" role="alert">
-			Für diese Woche gibt es keine geplanten Stunden.
-		  </div>` +
-						'<ul id="pagination" class="pagination align-items-center justify-content-center">' +
+					'<ul id="pagination" class="pagination align-items-center justify-content-center">' +
 						`<li class="page-item">
-		<button class="page-link" href="#" onClick="subOneWeek()" aria-label="Previous">
-		  <span aria-hidden="true">&laquo;</span>
-		  <span class="sr-only">Previous</span>
-		</button>
-	  </li>
-	  <li class="page-item"><a class="page-link" href="#">${dateString}</a></li>
-	  
-	  <li class="page-item">
-		<button onClick="addOneWeek()" class="page-link" href="#" aria-label="Next">
-		  <span aria-hidden="true">&raquo;</span>
-		  <span class="sr-only">Next</span>
-		</button>
-	  </li>
-	</ul>`
+<button class="page-link" href="#" onClick="subOneWeek()" aria-label="Previous">
+  <span aria-hidden="true">&laquo;</span>
+  <span class="sr-only">Previous</span>
+</button>
+</li>
+<li class="page-item"><a class="page-link" href="#">${dateString}</a></li>
+
+<li class="page-item">
+<button onClick="addOneWeek()" class="page-link" href="#" aria-label="Next">
+  <span aria-hidden="true">&raquo;</span>
+  <span class="sr-only">Next</span>
+</button>
+</li>
+</ul>` +
+						`<br><div class="alert alert-danger" role="alert">
+			Für diese Woche gibt es keine geplanten Stunden.
+		  </div>`
 				);
 			}
 		},
