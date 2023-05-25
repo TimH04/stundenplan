@@ -48,7 +48,6 @@ $(document).ready(async function () {
 			success: function (result) {
 				if (result != null) {
 					// loop over the data
-
 					$("#dropdown-class").removeClass("invisible");
 					$("#dropdown-class-label").removeClass(
 						"invisible"
@@ -132,7 +131,6 @@ $("#dropdown-group").change(function () {
 					"<option hidden disabled selected value> -- Klasse auswählen -- </option>					"
 				);
 				$("#dropdown-class").removeClass("invisible");
-				$("#table").html("");
 				$("#pagination").html("");
 				result.forEach((x) => {
 					// append each element from the array as a option to the dropdown
@@ -181,7 +179,8 @@ async function getData(state) {
 			dateString,
 		success: function (result) {
 			if (result.length != 0) {
-				let rows = "";
+				$("#table-div").removeClass("invisible");
+				console.log($("#table-div").html());
 				// loop over lessons
 				result.forEach((x) => {
 					let wochentag = "";
@@ -210,7 +209,7 @@ async function getData(state) {
 							break;
 					}
 					// add the table row to the string
-					rows +=
+					let row =
 						"<tr><td>" +
 						x.tafel_datum +
 						"</td>" +
@@ -233,30 +232,8 @@ async function getData(state) {
 						x.tafel_raum +
 						"</td>" +
 						"</tr>";
+					$("#table-body").append(row);
 				});
-				// conconate the table string and the pagination
-				$("#data").html(
-					'<ul id="pagination" class="pagination align-items-center justify-content-center">' +
-						`<li class="page-item">
-					  <button class="page-link" href="#" onClick="subOneWeek()" aria-label="Previous">
-						<span aria-hidden="true">&laquo;</span>
-						<span class="sr-only">Previous</span>
-					  </button>
-					</li>
-					<li class="page-item"><a class="page-link" href="#">${dateString}</a></li>
-					
-					<li class="page-item">
-					  <button onClick="addOneWeek()" class="page-link" href="#" aria-label="Next">
-						<span aria-hidden="true">&raquo;</span>
-						<span class="sr-only">Next</span>
-					  </button>
-					</li>
-				  </ul>` +
-						`<div class="table-responsive"><table class='table' id="table" data-mdb-animation="fade-in"><thead<tr> 
-						<th>Datum</th><th>Wochentag</th><th>Von</th><th>Bis</th><th>Lehrer</th><th>Fach</th><th>Raum</th></tr> </thead> 
-						${rows}
-						</table></div> `
-				);
 				if (state != null && state == "add") {
 					document
 						.getElementById("table")
@@ -268,23 +245,7 @@ async function getData(state) {
 				}
 			} else {
 				$("#data").html(
-					'<ul id="pagination" class="pagination align-items-center justify-content-center">' +
-						`<li class="page-item">
-<button class="page-link" href="#" onClick="subOneWeek()" aria-label="Previous">
-  <span aria-hidden="true">&laquo;</span>
-  <span class="sr-only">Previous</span>
-</button>
-</li>
-<li class="page-item"><a class="page-link" href="#">${dateString}</a></li>
-
-<li class="page-item">
-<button onClick="addOneWeek()" class="page-link" href="#" aria-label="Next">
-  <span aria-hidden="true">&raquo;</span>
-  <span class="sr-only">Next</span>
-</button>
-</li>
-</ul>` +
-						`<br><div class="alert alert-danger" role="alert">
+					`<br><div class="alert alert-danger" role="alert">
 			Für diese Woche gibt es keine geplanten Stunden.
 		  </div>`
 				);
