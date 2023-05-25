@@ -13,7 +13,7 @@ calculateWeekString(new Date());
 $(document).ready(async function () {
 	// get the berufe data from the api
 	await $.ajax({
-		url: "https:////sandbox.gibm.ch/berufe.php",
+		url: "https://sandbox.gibm.ch/berufe.php",
 		success: function (result) {
 			if (result != null) {
 				// loop over the data
@@ -38,7 +38,7 @@ $(document).ready(async function () {
 		},
 	});
 	// get the classes
-	let classUrl = "https:////sandbox.gibm.ch/klassen.php";
+	let classUrl = "https://sandbox.gibm.ch/klassen.php";
 	if (localStorage.getItem("group")) {
 		classUrl +=
 			"?beruf_id=" + localStorage.getItem("group");
@@ -122,7 +122,7 @@ $("#dropdown-group").change(function () {
 	// get classes of profession
 	$.ajax({
 		url:
-			"https:////sandbox.gibm.ch/klassen.php?beruf_id=" +
+			"http://sandbox.gibm.ch/klassen.php?beruf_id=" +
 			this.value,
 		success: function (result) {
 			if (result != null) {
@@ -175,7 +175,7 @@ async function getData(state) {
 	// get timetable of selected class
 	$.ajax({
 		url:
-			"https:////sandbox.gibm.ch/tafel.php?klasse_id=" +
+			"https://sandbox.gibm.ch/tafel.php?klasse_id=" +
 			selectedOption +
 			"&woche=" +
 			dateString,
@@ -236,11 +236,7 @@ async function getData(state) {
 				});
 				// conconate the table string and the pagination
 				$("#data").html(
-					`<div class="table-responsive"><table class='table' id="table" data-mdb-animation="fade-in"><thead<tr> 
-						<th>Datum</th><th>Wochentag</th><th>Von</th><th>Bis</th><th>Lehrer</th><th>Fach</th><th>Raum</th></tr> </thead> 
-						${rows}
-						</table></div> ` +
-						'<ul id="pagination" class="pagination align-items-center justify-content-center">' +
+					'<ul id="pagination" class="pagination align-items-center justify-content-center">' +
 						`<li class="page-item">
 					  <button class="page-link" href="#" onClick="subOneWeek()" aria-label="Previous">
 						<span aria-hidden="true">&laquo;</span>
@@ -255,7 +251,11 @@ async function getData(state) {
 						<span class="sr-only">Next</span>
 					  </button>
 					</li>
-				  </ul>`
+				  </ul>` +
+						`<div class="table-responsive"><table class='table' id="table" data-mdb-animation="fade-in"><thead<tr> 
+						<th>Datum</th><th>Wochentag</th><th>Von</th><th>Bis</th><th>Lehrer</th><th>Fach</th><th>Raum</th></tr> </thead> 
+						${rows}
+						</table></div> `
 				);
 				if (state != null && state == "add") {
 					document
@@ -268,25 +268,25 @@ async function getData(state) {
 				}
 			} else {
 				$("#data").html(
-					`<br><div class="alert alert-danger" role="alert">
-			Für diese Woche gibt es keine geplanten Stunden.
-		  </div>` +
-						'<ul id="pagination" class="pagination align-items-center justify-content-center">' +
+					'<ul id="pagination" class="pagination align-items-center justify-content-center">' +
 						`<li class="page-item">
-		<button class="page-link" href="#" onClick="subOneWeek()" aria-label="Previous">
-		  <span aria-hidden="true">&laquo;</span>
-		  <span class="sr-only">Previous</span>
-		</button>
-	  </li>
-	  <li class="page-item"><a class="page-link" href="#">${dateString}</a></li>
-	  
-	  <li class="page-item">
-		<button onClick="addOneWeek()" class="page-link" href="#" aria-label="Next">
-		  <span aria-hidden="true">&raquo;</span>
-		  <span class="sr-only">Next</span>
-		</button>
-	  </li>
-	</ul>`
+<button class="page-link" href="#" onClick="subOneWeek()" aria-label="Previous">
+  <span aria-hidden="true">&laquo;</span>
+  <span class="sr-only">Previous</span>
+</button>
+</li>
+<li class="page-item"><a class="page-link" href="#">${dateString}</a></li>
+
+<li class="page-item">
+<button onClick="addOneWeek()" class="page-link" href="#" aria-label="Next">
+  <span aria-hidden="true">&raquo;</span>
+  <span class="sr-only">Next</span>
+</button>
+</li>
+</ul>` +
+						`<br><div class="alert alert-danger" role="alert">
+			Für diese Woche gibt es keine geplanten Stunden.
+		  </div>`
 				);
 			}
 		},
