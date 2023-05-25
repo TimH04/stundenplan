@@ -122,7 +122,7 @@ $("#dropdown-group").change(function () {
 	// get classes of profession
 	$.ajax({
 		url:
-			"http://sandbox.gibm.ch/klassen.php?beruf_id=" +
+			"https://sandbox.gibm.ch/klassen.php?beruf_id=" +
 			this.value,
 		success: function (result) {
 			if (result != null) {
