@@ -13,7 +13,7 @@ calculateWeekString(new Date());
 $(document).ready(async function () {
 	// get the berufe data from the api
 	await $.ajax({
-		url: "http://sandbox.gibm.ch/berufe.php",
+		url: "https:////sandbox.gibm.ch/berufe.php",
 		success: function (result) {
 			if (result != null) {
 				// loop over the data
@@ -38,7 +38,7 @@ $(document).ready(async function () {
 		},
 	});
 	// get the classes
-	let classUrl = "http://sandbox.gibm.ch/klassen.php";
+	let classUrl = "https:////sandbox.gibm.ch/klassen.php";
 	if (localStorage.getItem("group")) {
 		classUrl +=
 			"?beruf_id=" + localStorage.getItem("group");
@@ -122,7 +122,7 @@ $("#dropdown-group").change(function () {
 	// get classes of profession
 	$.ajax({
 		url:
-			"http://sandbox.gibm.ch/klassen.php?beruf_id=" +
+			"https:////sandbox.gibm.ch/klassen.php?beruf_id=" +
 			this.value,
 		success: function (result) {
 			if (result != null) {
@@ -175,7 +175,7 @@ async function getData(state) {
 	// get timetable of selected class
 	$.ajax({
 		url:
-			"http://sandbox.gibm.ch/tafel.php?klasse_id=" +
+			"https:////sandbox.gibm.ch/tafel.php?klasse_id=" +
 			selectedOption +
 			"&woche=" +
 			dateString,
