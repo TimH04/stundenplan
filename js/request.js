@@ -57,7 +57,6 @@ $(document).ready(async function () {
 					);
 
 					result.forEach((x) => {
-						console.log($("#dropdown-class").html());
 						// append each element from the array as a option to the dropdown
 						$("#dropdown-class").append(
 							'<option value="' +
@@ -180,7 +179,7 @@ async function getData(state) {
 		success: function (result) {
 			if (result.length != 0) {
 				$("#table-div").removeClass("invisible");
-				console.log($("#table-div").html());
+				$("#table-body").html("");
 				// loop over lessons
 				result.forEach((x) => {
 					let wochentag = "";
