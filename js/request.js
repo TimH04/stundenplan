@@ -52,6 +52,8 @@ $(document).ready(async function () {
 					$("#dropdown-class-label").removeClass(
 						"invisible"
 					);
+					$("#pagination").removeClass("invisible");
+
 					$("#dropdown-class").append(
 						"<option hidden disabled selected value> -- Klasse auswählen -- </option>					"
 					);
