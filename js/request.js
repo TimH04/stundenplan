@@ -168,6 +168,9 @@ $("#dropdown-class").change(function () {
 });
 async function getData(state) {
 	// get selected option
+	$("#pagination").removeClass("invisible");
+	$("#data").removeClass("invisible");
+	$("#alert").html("");
 
 	let selectedOption = $(
 		"#dropdown-class option:selected"
@@ -238,19 +241,20 @@ async function getData(state) {
 				});
 				if (state != null && state == "add") {
 					document
-						.getElementById("table")
+						.getElementById("table-div")
 						.classList.add("animated", "fadeInRight");
 				} else if (state == "sub") {
 					document
-						.getElementById("table")
+						.getElementById("table-div")
 						.classList.add("animated", "fadeInLeft");
 				}
 			} else {
-				$("#data").html(
+				$("#alert").html(
 					`<br><div class="alert alert-danger" role="alert">
 			Für diese Woche gibt es keine geplanten Stunden.
 		  </div>`
 				);
+				$("#data").addClass("invisible");
 			}
 		},
 		error: function (xhr, ajaxOptions, thrownError) {
