@@ -40,7 +40,6 @@
 			<ul
 				id="pagination"
 				class="pagination align-items-center justify-content-center invisible">
-				' + `
 				<li class="page-item">
 					<button
 						class="page-link"
@@ -52,7 +51,7 @@
 					</button>
 				</li>
 				<li class="page-item">
-					<a class="page-link" href="#">${dateString}</a>
+					<a class="page-link" id="dateString" href="#"></a>
 				</li>
 
 				<li class="page-item">
@@ -61,8 +60,8 @@
 						class="page-link"
 						href="#"
 						aria-label="Next">
-						<span aria-hidden="true">&raquo;</span>
 						<span class="sr-only">Next</span>
+						<span aria-hidden="true">&raquo;</span>
 					</button>
 				</li>
 			</ul>

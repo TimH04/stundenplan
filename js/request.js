@@ -57,6 +57,7 @@ $(document).ready(async function () {
 					$("#dropdown-class").append(
 						"<option hidden disabled selected value> -- Klasse auswählen -- </option>					"
 					);
+					$("#dateString").text(dateString);
 
 					result.forEach((x) => {
 						// append each element from the array as a option to the dropdown
@@ -263,9 +264,11 @@ function addOneWeek() {
 	date.setDate(date.getDate() + 7);
 	calculateWeekString(date);
 	getData("add");
+	$("#dateString").text(dateString);
 }
 function subOneWeek() {
 	date.setDate(date.getDate() - 7);
 	calculateWeekString(date);
 	getData("sub");
+	$("#dateString").text(dateString);
 }
